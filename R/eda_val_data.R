@@ -1,23 +1,4 @@
 
-# Import SPSS data ----------------------------------------------------------------------------
-
-d <- read.spss("data/oorspronkelijke cohort.sav",
-               use.value.labels=TRUE,
-               to.data.frame=TRUE)
-
-d <- d %>% 
-  dplyr::mutate(
-    event = forcats::fct_relevel(event, "end of follow up", after=0)
-  )
-
-d <- d %>% 
-  dplyr::rename(
-    graft_survival = graftsurv,
-    recipient_age = age,
-    aantal_rejecties = rej_total,
-    time_event = fu
-  )
-
 
 # Transform data ----
 # Check if factor levels are similar across all datasets
@@ -31,7 +12,7 @@ codebook <- data.frame(variable = names(d),
            class = unlist(class_label),
            summary = paste(var_summary)
 )
-write.table(codebook, file = "output/codebook.txt", sep = "\t", row.names=FALSE)
+write.table(codebook, file = "output/codebook_validation.txt", sep = "\t", row.names=FALSE)
 
 ##  ---- eda-factor-plots 
 factors <- names(class_label)[class_label=="factor"]
@@ -75,15 +56,14 @@ corrplot(correlations,
          type="upper",
          method="ellipse",
          diag=TRUE)
-ggsave(filename="plots/corrplot.png", device="png")
+ggsave(filename="plots/corrplot_validate.png", device="png")
 
 ## ---- table 1 
-table1 <- CreateTableOne(data = d,
+table1 <- CreateTableOne(data = d %>% dplyr::select(-et_recipient_number),
                factorVars=factors[-which(factors %in% "event")],
                strata="event")
 table1 <- print(table1, printToggle=FALSE)
-
-write.csv2(table1, file="output/table1.csv")
+write.csv2(table1, file="output/table1_validation.csv")
 
 # Plot cumulative incidence curves ----
 ## ---- ci plot
@@ -139,7 +119,7 @@ rt$widths <- unit(rep(1/(ncol(rt)+1), ncol(rt)), "npc")
 # gridExtra::grid.arrange(ci_plot, rt)
 
 ci_plot
-ggsave(filename="plots/ci_curve.tif", 
+ggsave(filename="plots/ci_curve_validation.tif", 
        device="tiff",
        width=15, 
        height=12,
@@ -147,7 +127,7 @@ ggsave(filename="plots/ci_curve.tif",
        dpi=300)
 
 
-write.csv2(risk_table, file="output/risk_table.csv")
+write.csv2(risk_table, file="output/risk_table_validation.csv")
 
 # clean up
 rm(list = setdiff(ls(),c("d", "ci_plot", "risk_table", "factors", "continuous", "table1")))

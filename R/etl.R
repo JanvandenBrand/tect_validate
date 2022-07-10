@@ -1,12 +1,6 @@
 
 # see: 'plan/Validatie transplantectomie.docx'
 
-# Preliminaries -------------------------------------------------------------------------------
-
-req <- c("readxl", "stringr", "tidyr", "dplyr") 
-lapply(req, library, character.only=TRUE)
-rm(req)
-
 # Extract data -----------------------------------------------------------------------------------
 
 d_rumc <- readxl::read_excel("data/radboudumc.xlsx",
@@ -399,7 +393,6 @@ all.equal(d_rumc, d_amc)
 
 # Load ----------------------------------------------------------------------------------------
 
-# renv::snapshot()
 d <- bind_rows(
   d_rumc,
   d_amc,
@@ -419,10 +412,10 @@ d <- d %>%
         recipient_age
     )
 )
-# graft survival in years
+# graft survival in months 
 d <- d %>%
   dplyr::mutate(
-    graft_survival = as.numeric(difftime(initial_graft_fail_date, date_of_transplant, units="days")/365.25/12)
+    graft_survival = as.numeric(difftime(initial_graft_fail_date, date_of_transplant, units="days")/30.4375)
   )
 # encode events: 
 ## 1: tect b/c of graft intolerance
@@ -439,15 +432,17 @@ d <- d %>%
         reden_transplantectomie == "maligniteit" ~ 2,
         reden_transplantectomie == "nos" ~ 2,
         reden_transplantectomie == "ruimte maken" ~ 3,
-        reden_einde_follow_up == "overlijden" ~ 4,
+        reden_einde_follow_up == "re-transplantatie" ~ 4,
+        reden_einde_follow_up == "overlijden" ~ 5,
+        reden_einde_follow_up == "einde follow-up" ~ 0,
         et_recipient_number == 100442 ~ 2,
-        et_recipient_number == 068903 ~ 4,
-        TRUE ~ 0
+        et_recipient_number == 068903 ~ 5
       ),
       labels = c(
         "censored",
         "graft intolerance",
         "other reasons",
+        "create space",
         "re-transplantation",
         "death"
       )
@@ -461,13 +456,18 @@ d <- d %>%
       case_when(
         event == "graft intolerance" ~ difftime(datum_transplantectomie, initial_graft_fail_date, units="days")/30.4375,
         event == "other reasons" ~ difftime(datum_transplantectomie, initial_graft_fail_date, units="days")/30.4375,
-        event == "re-transplantation" ~ difftime(datum_transplantectomie, initial_graft_fail_date, units="days")/30.4375,
+        event == "create space" ~ difftime(datum_transplantectomie, initial_graft_fail_date, units="days")/30.4375,
+        event == "re-transplantation" ~ difftime(datum_einde_follow_up, initial_graft_fail_date, units="days")/30.4375,
         event == "death" ~ difftime(datum_einde_follow_up, initial_graft_fail_date, units="days")/30.4375,
         event == "censored" ~ difftime(datum_einde_follow_up, initial_graft_fail_date, units="days")/30.4375,
       )
     )
   )
-
+# any rejection ipv aantal rejecties
+d <- d %>% 
+  dplyr::mutate(
+    any_rejecties = ifelse(aantal_rejecties == 0, 0, 1)
+  )
 
 # Load ----------------------------------------------------------------------------------------
 
@@ -488,5 +488,12 @@ d <- d %>% dplyr::select(
   time_event,
   center)
 
+d <- d %>% filter(time_event >= 2.9)
+missing <- d %>% 
+  filter(is.na(donor_age) | 
+           is.na(aantal_rejecties) | 
+           is.na(graft_survival) | 
+           is.na(time_event)) 
+write.csv2(missing, file="output/missing.csv")
 d <- d %>% drop_na(donor_age, aantal_rejecties, graft_survival, time_event)
 

@@ -1,42 +1,30 @@
-# History files
+# Base R
+.Rproj.user
 .Rhistory
-.Rapp.history
-
-# Session Data files
 .RData
-
-# User-specific files
 .Ruserdata
 
-# Example code in package build process
-*-Ex.R
+# env
+/renv
 
-# Output files from R CMD build
-/*.tar.gz
+# data
+/data
 
-# Output files from R CMD check
-/*.Rcheck/
+# output
+output/*
+!output/sessioninfo.txt
+!output/fgr_model_final.RData
+!output/fgr_model_original.RData
+!output/fgr_model_recalibrated.RData
 
-# RStudio files
-.Rproj.user/
+# plots
+/plots
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+# reports
+/report
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
+# study plan
+/plan
 
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
-
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
-data/
-output/
-plot/
+# other
+/R/aboi.cif.R
