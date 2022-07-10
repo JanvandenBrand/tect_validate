@@ -32,6 +32,6 @@ source("R/func.R")
 source("R/validate_model.R")
 
 # Consume the model ----
-shiny::runApp("R/predictions.R")
+shiny::runApp("R/app.R")
 
 

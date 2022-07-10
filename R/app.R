@@ -1,8 +1,10 @@
 # Load requirements
-source("../R/env.R")
+library(tidyverse)
+library(prodlim)
+library(riskRegression)
 
 # Load the final model outside the app as environmental variables
-load(file="../output/fgr_model_final.RData", .GlobalEnv)
+load(file="fgr_model_final.RData", .GlobalEnv)
 times <- seq(0, 120, 1)
 
 # Define UI for app that draws a histogram ----
