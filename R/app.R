@@ -41,7 +41,20 @@ ui <- fluidPage(
     mainPanel(
       
       # Output: Histogram ----
-      plotOutput(outputId = "cumIncPlot")
+      plotOutput(outputId = "cumIncPlot"),
+      
+      # Disclaimer
+      h1("How to use"),
+      p("Adjust the sliders to the left to:"),
+      p("* reflect a patient's Age at the time of transplantation"),
+      p("* indicate the time of graft survival of the current kidney graft"),
+      p("* idicate if any anti rejection therapy was given prior to graft failure"),
+      br(),
+      p(strong("Note"),"The present work was intended for research purposes."),
+      p("The model presented here has not been validated for use in clinical practice and has no CE certification"),
+      p(),
+      br("For questions contact the main author at: kimbunthof <at> gmail.com"),
+      
       
     )
   )

@@ -1,13 +1,13 @@
 name: predicttect
-title: PredictTect
+title: predicttect
 username:
 account: jvandenbrand
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6618371
-bundleId: 6176224
+bundleId: 6176219
 url: https://jvandenbrand.shinyapps.io/predicttect/
-when: 1659865040.49255
-lastSyncTime: 1659865040.49255
+when: 1659864811.09426
+lastSyncTime: 1659864811.09426
 asMultiple: FALSE
 asStatic: FALSE
