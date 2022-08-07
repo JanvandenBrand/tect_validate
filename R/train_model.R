@@ -45,8 +45,11 @@ gam_age <- gam(time_event ~ s(recipient_age) + graft_survival + aantal_rejecties
                family=cox.ph(),
                weights=gi
                )
+tiff(filename="plots/gam_age.tiff")
 plot(gam_age)
-ggsave(filename="plots/gam_age.png", device="png")
+dev.off()
+
+
 # possible non-linear effect for age after 40 years
 
 mfp(Surv(time_event, gi) ~ fp(recipient_age, df=4) + graft_survival + aantal_rejecties,
@@ -60,8 +63,9 @@ gam_graftsurv <- gam(time_event ~ recipient_age + s(graft_survival) + aantal_rej
                      family=cox.ph(),
                      weights=gi
                     )
+tiff(filename="plots/gam_graftsurv.tiff")
 plot(gam_graftsurv)
-ggsave(filename="plots/gam_graftsurv.png", device="png")
+dev.off()
 # linear
 
 # create heaviside function for age

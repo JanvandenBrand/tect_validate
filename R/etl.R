@@ -468,6 +468,27 @@ d <- d %>%
   dplyr::mutate(
     any_rejecties = ifelse(aantal_rejecties == 0, 0, 1)
   )
+# decade of graft failure?
+d <- d %>%
+  dplyr::mutate(
+    dec = as.factor(
+      case_when(
+        lubridate::year(date_of_transplant)  > 1970 
+        & lubridate::year(date_of_transplant) <= 1980 ~ "1970-1980",
+        lubridate::year(date_of_transplant)  > 1980 
+        & lubridate::year(date_of_transplant) <= 1990 ~ "1980-1990",
+        lubridate::year(date_of_transplant)  > 1990 
+        & lubridate::year(date_of_transplant) <= 2000 ~ "1990-2000",
+        lubridate::year(date_of_transplant)  > 2000 
+        & lubridate::year(date_of_transplant) <= 2010 ~ "2000-2010",
+        lubridate::year(date_of_transplant)  > 2010 
+        & lubridate::year(date_of_transplant) <= 2020 ~ "2010-2020",
+        lubridate::year(date_of_transplant)  > 2020 
+        & lubridate::year(date_of_transplant) <= 2030 ~ "2020-2022",
+      )
+    )
+  )
+
 
 # Load ----------------------------------------------------------------------------------------
 
@@ -486,7 +507,8 @@ d <- d %>% dplyr::select(
   aantal_rejecties,
   event,
   time_event,
-  center)
+  center,
+  dec)
 
 d <- d %>% filter(time_event >= 2.9)
 missing <- d %>% 

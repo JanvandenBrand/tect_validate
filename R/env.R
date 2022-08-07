@@ -1,6 +1,5 @@
 # Manage packages ----
-
-req <- read.table("../requirements.txt")
+req <- read.table(here("requirements.txt"))
 req <- unlist(c(req))
   
 #' Install required packages from CRAN

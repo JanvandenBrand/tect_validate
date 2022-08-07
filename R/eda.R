@@ -152,4 +152,4 @@ write.csv2(risk_table, file="output/risk_table.csv")
 # clean up
 rm(list = setdiff(ls(),c("d", "ci_plot", "risk_table", "factors", "continuous", "table1")))
 
-
+save(d, file="data/training-data.Rdata")
