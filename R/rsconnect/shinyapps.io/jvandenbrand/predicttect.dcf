@@ -5,9 +5,10 @@ account: jvandenbrand
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6618371
-bundleId: 6176224
+bundleId: 6176244
 url: https://jvandenbrand.shinyapps.io/predicttect/
-when: 1659865040.49255
-lastSyncTime: 1659865040.49255
+when: 1659865813.70025
+lastSyncTime: 1659865813.70025
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: create_codebook.R|cuminc_rumc.R|eda.R|eda_val_data.R|env.R|etl.R|func.R|model.R|predictions.R|report_model.R|run.R|train_model.R|validate_model.R
