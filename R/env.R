@@ -1,4 +1,5 @@
 # Manage packages ----
+library(here)
 req <- read.table(here("requirements.txt"))
 req <- unlist(c(req))
   
