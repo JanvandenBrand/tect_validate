@@ -104,3 +104,34 @@ ggsave(plot_calibration(fgr_train_score),
        height=12,
        units="cm",
        dpi=300)
+
+# Model performance of donor age model----
+fgr_donorage_score <- riskRegression::Score(list(fgr_model_donorage),
+                                         formula=Hist(time_event, as.integer(event)) ~ 1,
+                                         cause=1,
+                                         metrics="auc",
+                                         plot="calibration",
+                                         data=d, 
+                                         se.fit=0L,
+                                         conf.int=TRUE,
+                                         times = times)
+
+## plot ROC auc -----
+ggsave(plot=plot_auc(fgr_donorage_score),
+       filename="plots/AUC-donorage-training-data.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+write.csv2(fgr_donorage_score$AUC$score, file="output/AUC-donorage-training-data.csv")
+## Plot calibration original model ---- 
+ggsave(plot_calibration(fgr_donorage_score),
+       filename="plots/calibration-donorage-training-data.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+

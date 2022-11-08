@@ -5,6 +5,7 @@ d <- d %>%
     event = as.integer(event) - 1,
     rej_any = ifelse(aantal_rejecties==0, 0, 1),
     hs = ifelse(recipient_age > 40, 1, 0),
+    hs_inverse = 1 - hs,
     prog_index = 0.027 * donor_age - 0.01126 * graft_survival + 0.336 * aantal_rejecties
 )
 
@@ -13,6 +14,7 @@ d <- d %>%
 load(file="output/fgr_model_original.RData", .GlobalEnv)
 load(file="output/fgr_model_recalibrated.RData", .GlobalEnv)
 load(file="output/fgr_model_final.RData", .GlobalEnv)
+load(file="output/fgr_model_donorage.RData", .GlobalEnv)
 
 
 # Model performance in the validation data ----------------------------------------------------
@@ -109,6 +111,36 @@ ggsave(plot=plot_calibration(fgr_train_score),
        height=12,
        units="cm",
        dpi=300)
+
+## Model performance of the donor age model ----
+### score-function ----
+fgr_donorage_score <- riskRegression::Score(list(fgr_model_donorage),
+                                         formula=Hist(time_event, as.integer(event)) ~ 1,
+                                         cause=1,
+                                         metrics="auc",
+                                         plot="calibration",
+                                         data=d, 
+                                         se.fit=0L,
+                                         conf.int=TRUE,
+                                         times = times)
+### plot ROC auc -----
+ggsave(plot=plot_auc(fgr_donorage_score),
+       filename="plots/AUC-donorage-validation-data.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+write.csv2(fgr_donorage_score$AUC$score, file="output/AUC-donorage-validation-data.csv")
+### Plot calibration original model ---- 
+ggsave(plot=plot_calibration(fgr_donorage_score),
+       filename="plots/calibration-donorage-validation-data.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
 
 # ---- Export data
 write.csv2(d, "data/tect-data.csv")

@@ -3,6 +3,8 @@
 
 # Install packages
 install.packages("here")
+library(here)
+
 source("R/env.R")
 
 # Model training on original data of Transplant Int 2018 --------------------------------------
@@ -32,7 +34,7 @@ source(here("R", "func.R"))
 source(here("R", "validate_model.R"))
 
 # Consume the model ----
-shiny::runApp(here("R", "predictions.R"))
+shiny::runApp(here("R", "app.R"))
 
 # Additional figures
 source(here("R", "cuminc_rumc.R"))

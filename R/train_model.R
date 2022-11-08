@@ -73,6 +73,7 @@ dev.off()
 d <- d %>% 
   dplyr::mutate(
     hs = ifelse(recipient_age > 40, 1, 0),
+    hs_inverse = 1 - hs,
     rej_any = ifelse(aantal_rejecties==0, 0, 1)
   )
 
@@ -95,16 +96,23 @@ fgr_model_final <- FGR(Hist(time_event, as.integer(event)) ~ I(hs*recipient_age)
                  cause=1,
                  data=d)
 fgr_model_final_summary <- summary(fgr_model_final)
+# Model with age <40 and donorage
+fgr_model_donorage <- FGR(Hist(time_event, as.integer(event)) ~ I(hs_inverse*recipient_age) + graft_survival + rej_any + donor_age,
+                          cause=1,
+                          data=d)
+fgr_model_donorage_summary <- summary(fgr_model_donorage)
 
 result_table <- list(
   base_model = list("loglik" = fgr_model_base_summary$loglik, "subHR" = fgr_model_base_summary$conf.int[,c(1, 3, 4)]),
   heaviside_model = list("loglik" = fgr_model_hs_summary$loglik, "subHR" = fgr_model_hs_summary$conf.int[,c(1, 3, 4)]),
-  fgr_model_final = list("loglik" = fgr_model_final_summary$loglik, "subHR" = fgr_model_final_summary$conf.int[,c(1, 3, 4)])
+  fgr_model_final = list("loglik" = fgr_model_final_summary$loglik, "subHR" = fgr_model_final_summary$conf.int[,c(1, 3, 4)]),
+  fgr_model_donorage = list("loglik" = fgr_model_donorage_summary$loglik, "subHR" = fgr_model_donorage_summary$conf.int[,c(1, 3, 4)])
 )
-result_table
+result_table <- do.call(rbind, unlist(result_table, recursive=FALSE))
 write.csv2(result_table,"output/retrained-models.csv")
 
 # Save the models for predictions
-save(fgr_model_original, file="output/fgr_model_original.RData")
-save(fgr_model_recalibrated, file="output/fgr_model_recalibrated.RData")
-save(fgr_model_final, file="output/fgr_model_final.RData")
+save(fgr_model_original, file="R/fgr_model_original.RData")
+save(fgr_model_recalibrated, file="R/fgr_model_recalibrated.RData")
+save(fgr_model_final, file="R/fgr_model_final.RData")
+save(fgr_model_donorage, file="R/fgr_model_donorage.RData")
