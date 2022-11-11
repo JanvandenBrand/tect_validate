@@ -73,7 +73,6 @@ dev.off()
 d <- d %>% 
   dplyr::mutate(
     hs = ifelse(recipient_age > 40, 1, 0),
-    hs_inverse = 1 - hs,
     rej_any = ifelse(aantal_rejecties==0, 0, 1)
   )
 
@@ -97,7 +96,7 @@ fgr_model_final <- FGR(Hist(time_event, as.integer(event)) ~ I(hs*recipient_age)
                  data=d)
 fgr_model_final_summary <- summary(fgr_model_final)
 # Model with age <40 and donorage
-fgr_model_donorage <- FGR(Hist(time_event, as.integer(event)) ~ I(hs_inverse*recipient_age) + graft_survival + rej_any + donor_age,
+fgr_model_donorage <- FGR(Hist(time_event, as.integer(event)) ~ I(hs*recipient_age) + graft_survival + rej_any + donor_age,
                           cause=1,
                           data=d)
 fgr_model_donorage_summary <- summary(fgr_model_donorage)

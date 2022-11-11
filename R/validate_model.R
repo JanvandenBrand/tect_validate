@@ -5,16 +5,15 @@ d <- d %>%
     event = as.integer(event) - 1,
     rej_any = ifelse(aantal_rejecties==0, 0, 1),
     hs = ifelse(recipient_age > 40, 1, 0),
-    hs_inverse = 1 - hs,
     prog_index = 0.027 * donor_age - 0.01126 * graft_survival + 0.336 * aantal_rejecties
 )
 
 # Models ------------------------------------------------------------------
 
-load(file="output/fgr_model_original.RData", .GlobalEnv)
-load(file="output/fgr_model_recalibrated.RData", .GlobalEnv)
-load(file="output/fgr_model_final.RData", .GlobalEnv)
-load(file="output/fgr_model_donorage.RData", .GlobalEnv)
+load(file="R/fgr_model_original.RData", .GlobalEnv)
+load(file="R/fgr_model_recalibrated.RData", .GlobalEnv)
+load(file="R/fgr_model_final.RData", .GlobalEnv)
+load(file="R/fgr_model_donorage.RData", .GlobalEnv)
 
 
 # Model performance in the validation data ----------------------------------------------------
