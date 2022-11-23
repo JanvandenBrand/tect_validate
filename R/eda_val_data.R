@@ -67,33 +67,76 @@ write.csv2(table1, file="output/table1_validation.csv")
 
 # Plot cumulative incidence curves ----
 ## ---- ci plot
-ci_tect <- with(d, 
+# Panel A: creat a plot where all transplantectomies are in a single category.
+d_death <- d %>% 
+  mutate(event = factor(
+    case_when(
+      event == "other reasons" ~ "nephrectomy",
+      event == "create space" ~ "nephrectomy",
+      event == "graft intolerance" ~ "nephrectomy",
+      event == "re-transplantation" ~ "no nephrectomy",
+      event == "death" ~ "death with graft in situ",
+      event == "censored" ~ "censored"
+    )
+  )
+)
+ci_tect <- with(d_death, 
                 cuminc(ftime=time_event,
                        fstatus=event,
-                       cencode=0)
-                )
-# cast into a data.frame
-ci <- lapply(ci_tect, as.data.frame)
-for (i in seq_along(ci)) {
-  ci[[i]] <- cbind(ci[[i]], levels(d$event)[i])
-}
-ci <- bind_rows(ci)
-ci <- ci %>%  rename(outcome = `levels(d$event)[i]`)
-ci_plot <- ggplot(data = ci %>% dplyr::filter(outcome != "censored"), 
-                  aes(x=time, y=est, color=outcome)) + 
-  geom_step() +
-  colorspace::scale_color_discrete_qualitative(palette="Dark 3") +
-  theme_classic() +
-  ggtitle("") +
-  xlab("Follow-up time (months)") + 
-  scale_x_continuous(breaks=seq(0, 120, 12)) +
-  ylab("Cumulative incidence") + 
-  scale_y_continuous(limits=c(0, 1),
-                     breaks=seq(0, 1, 0.2)) +
-  theme(legend.position=c(0.8, 0.9),
-        axis.title=element_text(size=16),
-        axis.text=element_text(size=12)) +
-  coord_cartesian(xlim=c(0, 120))
+                       cencode=1)
+)
+ci_plot <- get_ci_plot(data=d_death, ci_estimate=ci_tect, censored="censored")
+ggsave(ci_plot,
+       filename="plots/ci_curve_panel_A_validation.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+
+# Panel B: create a plot where all competing events are in a single category
+d_tect <- d %>% 
+  mutate(event = factor(
+    case_when(
+      event == "create space" ~ "graft nephrectomy because other reason",
+      event == "other reasons" ~ "graft nephrectomy because other reason",
+      event == "graft intolerance" ~ "graft nephrectomy because of graft intolerance",
+      event == "re-transplantation" ~ "competing event",
+      event == "death" ~ "competing event",
+      event == "censored" ~ "censored"
+    )
+  )
+  )
+ci_tect <- with(d_tect, 
+                cuminc(ftime=time_event,
+                       fstatus=event,
+                       cencode=1)
+)
+ci_plot <- get_ci_plot(data=d_tect, ci_estimate=ci_tect, censored="censored")
+ggsave(ci_plot,
+       filename="plots/ci_curve_panel_B_Validation.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+ci_estimate <- with(d,
+                    cuminc(ftime=time_event,
+                           fstatus=event,
+                           cencode=1)
+                    )
+stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, start=0, end=36, step=1) 
+ggsave(stacked_cuminc,
+       filename="plots/stacked_ci_curve_Validation.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+  
 # get a risk table
 km <- survfit(Surv(time=time_event, event=event) ~ 1, data=d)
 risktable <- data.frame(
@@ -116,17 +159,6 @@ rt <- tableGrob(rt,
                                        rowhead = list(hjust=0, x=0.3)
                                        ))
 rt$widths <- unit(rep(1/(ncol(rt)+1), ncol(rt)), "npc")
-# gridExtra::grid.arrange(ci_plot, rt)
-
-ci_plot
-ggsave(filename="plots/ci_curve_validation.tif", 
-       device="tiff",
-       width=15, 
-       height=12,
-       units="cm",
-       dpi=300)
-
-
 write.csv2(risk_table, file="output/risk_table_validation.csv")
 
 # clean up

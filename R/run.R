@@ -2,7 +2,9 @@
 # Environment ---------------------------------------------------------------------------------
 
 # Install packages
-install.packages("here")
+if ("here" %in% installed.packages()[,1] == FALSE) {
+  install.packages("here")
+}
 library(here)
 
 source("R/env.R")
@@ -33,9 +35,8 @@ source(here("R", "eda_val_data.R"))
 source(here("R", "func.R"))
 source(here("R", "validate_model.R"))
 
-# Consume the model ----
-shiny::runApp(here("R", "app.R"))
-
 # Additional figures
 source(here("R", "cuminc_rumc.R"))
 
+# Consume the model ----
+shiny::runApp(here("R", "app.R"))

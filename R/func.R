@@ -48,6 +48,81 @@ get_summary <- function(d) {
 }
 
 
+#' Plot Cumulative Incidence
+#' 
+#' Plot the cumulative incidence of the competing outcome
+#' 
+#' @param data the dataframe used to obtain cuminc
+#' @param ci_estimate a ci object returned by cmprsk::cuminc
+#' @param censored a character value with the label for the censored category
+#' 
+#' @returns a ggplot object
+get_ci_plot <- function(data, ci_estimate, censored) {
+  ci <- lapply(ci_estimate, as.data.frame)
+  for (i in seq_along(ci)) {
+    ci[[i]] <- cbind(ci[[i]], levels(data$event)[i])
+  }
+  ci <- bind_rows(ci)
+  ci <- ci %>%  rename(outcome = `levels(data$event)[i]`)
+  ci_plot <- ggplot(data = ci %>% dplyr::filter(outcome != censored), 
+                    aes(x=time, y=est, color=outcome)) + 
+    geom_step() +
+    colorspace::scale_color_discrete_qualitative(palette="Dark 3") +
+    theme_classic() +
+    ggtitle("") +
+    xlab("Follow-up time (months)") + 
+    scale_x_continuous(breaks=seq(0, 120, 12)) +
+    ylab("Cumulative incidence") + 
+    scale_y_continuous(limits=c(0, 1),
+                       breaks=seq(0, 1, 0.2)) +
+    theme(legend.position=c(0.8, 0.9),
+          axis.title=element_text(size=16),
+          axis.text=element_text(size=12)) +
+    coord_cartesian(xlim=c(0, 120))
+}
+
+#' Plot Stacked Cumulative Incidence
+#' 
+#' Plot stacked areas of cumulative incidence of the competing outcomes
+#' 
+#' @param ci_estimate a ci object returned by cmprsk::cuminc
+#' @param start 1L (default=0) an integer value to indicate the start time for the cuminc estimates
+#' @param end 1L (default=12) an integer value to indicate the end time for the cuminc estimates
+#' @param step 1L (default=1) an integer value to indicate the step size for the cuminc estimates
+#' 
+#' @returns a ggplot object
+get_stacked_cuminc_plot <- function(ci_estimate, start=0, end=12, step=1) {
+  # obtain estimated cuminc at fixed time points for all competing events so that we have a data point for every time
+  ci_estimates_fixed <- timepoints(
+    ci_estimate, 
+    times=seq(start, end, step)
+  )$est
+  # wrangle the data in long format for easier plotting
+  ci_estimates_fixed <- t(ci_estimates_fixed) %>% 
+    as.data.frame() %>%
+    mutate(time = seq(start,end,step))
+  names(ci_estimates_fixed) <- str_remove_all(names(ci_estimates_fixed), "1 ")
+  ci_estimates_fixed <- ci_estimates_fixed %>%  
+    pivot_longer(!time, names_to="outcome", values_to="estimate")
+  # The actual plot
+  stacked_ci_plot <- ggplot(data = ci_estimates_fixed, 
+                            aes(x=time, y=estimate, fill=outcome)) + 
+    geom_area() +
+    colorspace::scale_color_discrete_qualitative(palette="Dark 3") +
+    theme_classic() +
+    ggtitle("") +
+    xlab("Follow-up time (months)") + 
+    scale_x_continuous(breaks=seq(start, end, step)) +
+    ylab("Cumulative incidence") + 
+    scale_y_continuous(limits=c(0, 1),
+                       breaks=seq(0, 1, 0.2)) +
+    theme(legend.position=c(0.8, 0.9),
+          axis.title=element_text(size=16),
+          axis.text=element_text(size=12)) +
+    coord_cartesian(xlim=c(start, end))
+}
+
+
 #' Plot AUC
 #' 
 #' Plot the area under the received characteristics curve over time

@@ -86,34 +86,74 @@ table1 <- print(table1, printToggle=FALSE)
 write.csv2(table1, file="output/table1.csv")
 
 # Plot cumulative incidence curves ----
-## ---- ci plot
-ci_tect <- with(d, 
+# Panel A: creat a plot where all transplantectomies are in a single category.
+d_death <- d %>% 
+  mutate(event = factor(
+           case_when(
+              event == "graft nephrectomy because other reason" ~ "nephrectomy",
+              event == "graft nephrectomy because of graft intolerance" ~ "nephrectomy",
+              event == "retransplantation with previous graft in situ" ~ "no nephrectomy",
+              event == "death with graft in situ" ~ "death with graft in situ",
+              event == "end of follow up" ~ "end of follow up"
+              )
+  )
+)
+ci_tect <- with(d_death, 
                 cuminc(ftime=time_event,
                        fstatus=event,
-                       cencode=0)
+                       cencode=2)
                 )
-# cast into a data.frame
-ci <- lapply(ci_tect, as.data.frame)
-for (i in seq_along(ci)) {
-  ci[[i]] <- cbind(ci[[i]], levels(d$event)[i])
-}
-ci <- bind_rows(ci)
-ci <- ci %>%  rename(outcome = `levels(d$event)[i]`)
-ci_plot <- ggplot(data = ci %>% dplyr::filter(outcome != "censored"), 
-                  aes(x=time, y=est, color=outcome)) + 
-  geom_step() +
-  colorspace::scale_color_discrete_qualitative(palette="Dark 3") +
-  theme_classic() +
-  ggtitle("") +
-  xlab("Follow-up time (months)") + 
-  scale_x_continuous(breaks=seq(0, 120, 12)) +
-  ylab("Cumulative incidence") + 
-  scale_y_continuous(limits=c(0, 1),
-                     breaks=seq(0, 1, 0.2)) +
-  theme(legend.position=c(0.8, 0.9),
-        axis.title=element_text(size=16),
-        axis.text=element_text(size=12)) +
-  coord_cartesian(xlim=c(0, 120))
+ci_plot <- get_ci_plot(data=d_death, ci_estimate=ci_tect, censored="end of follow up")
+ggsave(ci_plot,
+       filename="plots/ci_curve_panel_A.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+
+# Panel B: create a plot where all competing events are in a single category
+d_tect <- d %>% 
+  mutate(event = factor(
+    case_when(
+      event == "graft nephrectomy because other reason" ~ "graft nephrectomy because other reason",
+      event == "graft nephrectomy because of graft intolerance" ~ "graft nephrectomy because of graft intolerance",
+      event == "retransplantation with previous graft in situ" ~ "competing event",
+      event == "death with graft in situ" ~ "competing event",
+      event == "end of follow up" ~ "end of follow up"
+    )
+  )
+)
+ci_tect <- with(d_tect, 
+                cuminc(ftime=time_event,
+                       fstatus=event,
+                       cencode=2)
+)
+ci_plot <- get_ci_plot(data=d_tect, ci_estimate=ci_tect, censored="end of follow up")
+ggsave(ci_plot,
+       filename="plots/ci_curve_panel_B.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+# stacked cumulative incidence plot
+ci_estimate <- with(d,
+                    cuminc(ftime=time_event,
+                           fstatus=event,
+                           cencode=1)
+)
+stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, start=0, end=36, step=1) 
+ggsave(stacked_cuminc,
+       filename="plots/stacked_cuminc.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+
 # get a risk table
 km <- survfit(Surv(time=time_event, event=event) ~ 1, data=d)
 risktable <- data.frame(
@@ -134,20 +174,10 @@ colnames(rt) <- round(risk_table$time)
 rt <- tableGrob(rt, 
                 theme = ttheme_minimal(base_size = 10, 
                                        rowhead = list(hjust=0, x=0.3)
-                                       ))
+                ))
 rt$widths <- unit(rep(1/(ncol(rt)+1), ncol(rt)), "npc")
-# gridExtra::grid.arrange(ci_plot, rt)
-
-ci_plot
-ggsave(filename="plots/ci_curve.tif", 
-       device="tiff",
-       width=15, 
-       height=12,
-       units="cm",
-       dpi=300)
-
-
 write.csv2(risk_table, file="output/risk_table.csv")
+
 
 # clean up
 rm(list = setdiff(ls(),c("d", "ci_plot", "risk_table", "factors", "continuous", "table1")))
