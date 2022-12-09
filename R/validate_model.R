@@ -140,11 +140,46 @@ ggsave(plot=plot_calibration(fgr_donorage_score),
        units="cm",
        dpi=300)
 
+# ---- plot combined AUCs ----
 
-# ---- Export data
+plot_auc_combined <- ggplot() +
+  geom_line(data=fgr_train_score$AUC$score, 
+            aes(x=times, y=AUC),
+            color="gray30",
+            lty=1) +
+  geom_line(data=score_model_original$AUC$score, 
+            aes(x=times, y=AUC),
+            lty=5) +
+  geom_hline(aes(yintercept=0.5),
+             color="gray62",
+             lty=3) +
+  theme_classic() +
+  labs(title="") +
+  xlab("Follow-up time (months)") + 
+  scale_x_continuous(limits=c(0, 36),
+                     breaks=seq(0, 36, 6)) +
+  ylab("Area under the ROC curve") + 
+  scale_y_continuous(limits=c(0.0, 1),
+                     breaks=seq(0.0, 1, 0.2)) +
+  theme(axis.title  = element_text(size = 16),
+        axis.text = element_text(size = 12))
+
+
+ggsave(plot=plot_auc_combined,
+       filename="plots/auc-combined.tif", 
+       device="tiff",
+       width=15, 
+       height=12,
+       units="cm",
+       dpi=300)
+
+
+
+# ---- Export data ----
+
 write.csv2(d, "data/tect-data.csv")
 
 
-# ---- sessionInfo
+# ---- sessionInfo ----
 
 writeLines(capture.output(sessionInfo()), "output/sessioninfo.txt")

@@ -94,16 +94,16 @@ d_death <- d %>%
               event == "graft nephrectomy because of graft intolerance" ~ "nephrectomy",
               event == "retransplantation with previous graft in situ" ~ "no nephrectomy",
               event == "death with graft in situ" ~ "death with graft in situ",
-              event == "end of follow up" ~ "end of follow up"
+              event == "end of follow up" ~ "censored"
               )
   )
 )
 ci_tect <- with(d_death, 
                 cuminc(ftime=time_event,
                        fstatus=event,
-                       cencode=2)
+                       cencode=1)
                 )
-ci_plot <- get_ci_plot(data=d_death, ci_estimate=ci_tect, censored="end of follow up")
+ci_plot <- get_ci_plot(data=d_death, ci_estimate=ci_tect, censored="censored")
 ggsave(ci_plot,
        filename="plots/ci_curve_panel_A.tif", 
        device="tiff",
@@ -121,16 +121,16 @@ d_tect <- d %>%
       event == "graft nephrectomy because of graft intolerance" ~ "graft nephrectomy because of graft intolerance",
       event == "retransplantation with previous graft in situ" ~ "competing event",
       event == "death with graft in situ" ~ "competing event",
-      event == "end of follow up" ~ "end of follow up"
+      event == "end of follow up" ~ "censored"
     )
   )
 )
 ci_tect <- with(d_tect, 
                 cuminc(ftime=time_event,
                        fstatus=event,
-                       cencode=2)
+                       cencode=1)
 )
-ci_plot <- get_ci_plot(data=d_tect, ci_estimate=ci_tect, censored="end of follow up")
+ci_plot <- get_ci_plot(data=d_tect, ci_estimate=ci_tect, censored="censored")
 ggsave(ci_plot,
        filename="plots/ci_curve_panel_B.tif", 
        device="tiff",
@@ -138,13 +138,38 @@ ggsave(ci_plot,
        height=12,
        units="cm",
        dpi=300)
-# stacked cumulative incidence plot
+# reorder event categories so that GIS is at the bottom of the stack
+d <- d %>% mutate(
+    event = forcats::fct_recode(event,
+                               "censored" = "end of follow up",
+                               ) 
+  )
+d <- d %>% mutate(
+  event = forcats::fct_relevel(event,
+                                "graft nephrectomy because of graft intolerance",
+                                "graft nephrectomy because other reason",
+                                "retransplantation with previous graft in situ",
+                                "death with graft in situ",
+                                "censored")
+  )
 ci_estimate <- with(d,
                     cuminc(ftime=time_event,
                            fstatus=event,
-                           cencode=1)
+                           cencode=5)
 )
-stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, start=0, end=36, step=1) 
+ci_plot <- get_ci_plot(data=d, ci_estimate=ci_estimate, censored="censored")
+# stacked cumulative incidence plot
+stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, 
+                                          start=0, 
+                                          end=36, 
+                                          step=1, 
+                                          x_interval=3,
+                                          outcome_order=c("censored",
+                                            "death with graft in situ",
+                                            "retransplantation with previous graft in situ",
+                                            "graft nephrectomy because other reason",
+                                            "graft nephrectomy because of graft intolerance")
+                                          )
 ggsave(stacked_cuminc,
        filename="plots/stacked_cuminc.tif", 
        device="tiff",

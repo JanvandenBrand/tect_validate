@@ -55,7 +55,6 @@ ui <- fluidPage(
       p(),
       br("For questions contact the main author at: kimbunthof <at> gmail.com"),
       
-      
     )
   )
 )

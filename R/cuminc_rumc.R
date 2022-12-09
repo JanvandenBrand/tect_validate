@@ -4,6 +4,13 @@ load("data/validation-data.RData")
 d_validatie <- d
 load("data/training-data.RData")
 
+# ---- configurations ---
+
+max_follow_up <- 60
+breaks <- 6 
+
+# ---- code starts here ---- 
+
 d <- d %>% 
   dplyr::select(time_event, event, dec)
 d <- d %>%
@@ -42,23 +49,23 @@ ci_plot <- ggplot(data = ci,
   theme_classic() +
   ggtitle("") +
   xlab("Follow-up time (months)") + 
-  scale_x_continuous(breaks=seq(0, 120, 12)) +
+  scale_x_continuous(breaks=seq(0, max_follow_up, breaks)) +
   ylab("Cumulative incidence") + 
   scale_y_continuous(limits=c(0, 1),
                      breaks=seq(0, 1, 0.2)) +
   theme(legend.position=c(0.8, 0.9),
         axis.title=element_text(size=16),
         axis.text=element_text(size=12)) +
-  coord_cartesian(xlim=c(0, 120))
+  coord_cartesian(xlim=c(0, max_follow_up))
 # get a risk table
 km <- survfit(Surv(time=time_event, event=event) ~ 1, data=d)
 risktable <- data.frame(
   time = km$time,
   n = km$n.risk[,1]
 )
-# select times closest to seq(0,120,12)
-list_risk_table <- vector("list", length=length(seq(0, 120, 12)))
-for (t in c(3, seq(12, 120, 12))) {
+# select times closest to seq(0,max_follow_up,breaks)
+list_risk_table <- vector("list", length=length(seq(0, max_follow_up, breaks)))
+for (t in c(3, seq(breaks, max_follow_up, breaks))) {
   list_risk_table[[t]] <- risktable[which.min(abs(risktable$time-t)),]
 }
 risk_table <- bind_rows(list_risk_table)

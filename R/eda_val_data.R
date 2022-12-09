@@ -122,19 +122,51 @@ ggsave(ci_plot,
        units="cm",
        dpi=300)
 
+# reorder event categories so that GIS is at the bottom of the stack
+d <- d %>% mutate(
+  event = forcats::fct_recode(event,
+                              "graft nephrectomy because of graft intolerance"= "graft intolerance",
+                              "graft nephrectomy because other reason" = "other reasons",
+                              "graft nephrectomy because other reason" = "create space",
+                              "retransplantation with previous graft in situ" = "re-transplantation",
+                              "death with graft in situ" = "death",
+                              "censored" = "censored",
+  ) 
+)
+d <- d %>% mutate(
+  event = forcats::fct_relevel(event,
+                               "graft nephrectomy because of graft intolerance",
+                               "graft nephrectomy because other reason",
+                               "retransplantation with previous graft in situ",
+                               "death with graft in situ",
+                               "censored")
+)
 ci_estimate <- with(d,
                     cuminc(ftime=time_event,
                            fstatus=event,
-                           cencode=1)
-                    )
-stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, start=0, end=36, step=1) 
+                           cencode=5)
+)
+ci_plot <- get_ci_plot(data=d, ci_estimate=ci_estimate, censored="censored")
+# stacked cumulative incidence plot
+stacked_cuminc <- get_stacked_cuminc_plot(ci_estimate, 
+                                          start=0, 
+                                          end=36, 
+                                          step=1, 
+                                          x_interval=3,
+                                          outcome_order=c("censored",
+                                                          "death with graft in situ",
+                                                          "retransplantation with previous graft in situ",
+                                                          "graft nephrectomy because other reason",
+                                                          "graft nephrectomy because of graft intolerance")
+)
 ggsave(stacked_cuminc,
-       filename="plots/stacked_ci_curve_Validation.tif", 
+       filename="plots/stacked_cuminc_validation.tif", 
        device="tiff",
        width=15, 
        height=12,
        units="cm",
        dpi=300)
+
 
   
 # get a risk table
