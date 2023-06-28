@@ -5,42 +5,34 @@ Running under: Windows Server x64 (build 17763)
 Matrix products: default
 
 locale:
-[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252
-[4] LC_NUMERIC=C                           LC_TIME=English_United States.1252    
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252    LC_MONETARY=English_United States.1252 LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] shiny_1.7.1               mfp_1.5.2.2               forcats_0.5.1             mgcv_1.8-36              
- [5] nlme_3.1-152              gridExtra_2.3             foreign_0.8-81            pec_2021.10.11           
- [9] prodlim_2019.11.13        caret_6.0-90              lattice_0.20-44           xfun_0.29                
-[13] riskRegression_2021.10.10 survminer_0.4.9           ggpubr_0.4.0              cmprsk_2.2-10            
-[17] survival_3.2-11           ggplot2_3.3.5             corrplot_0.90             tableone_0.13.0          
-[21] dplyr_1.0.7               tidyr_1.1.3               stringr_1.4.0             readxl_1.3.1             
-[25] here_1.0.1               
+ [1] mfp_1.5.2.2               forcats_0.5.1             mgcv_1.8-41               nlme_3.1-162              gridExtra_2.3             foreign_0.8-84           
+ [7] pec_2021.10.11            prodlim_2019.11.13        caret_6.0-90              lattice_0.20-45           xfun_0.29                 riskRegression_2021.10.10
+[13] survminer_0.4.9           ggpubr_0.4.0              cmprsk_2.2-10             survival_3.5-3            ggplot2_3.3.5             corrplot_0.90            
+[19] tableone_0.13.0           dplyr_1.0.7               tidyr_1.1.3               stringr_1.4.0             readxl_1.3.1              here_1.0.1               
+[25] shiny_1.7.1              
 
 loaded via a namespace (and not attached):
-  [1] SparseM_1.81         ModelMetrics_1.2.2.2 knitr_1.33           multcomp_1.4-17      data.table_1.14.2   
-  [6] rpart_4.1-15         generics_0.1.0       timereg_2.0.1        TH.data_1.1-0        polspline_1.1.19    
- [11] future_1.23.0        lubridate_1.7.10     httpuv_1.6.5         assertthat_0.2.1     gower_0.2.2         
- [16] hms_1.1.0            promises_1.2.0.1     fansi_0.5.0          km.ci_0.5-2          DBI_1.1.1           
- [21] htmlwidgets_1.5.4    stats4_4.1.1         purrr_0.3.4          ellipsis_0.3.2       backports_1.2.1     
- [26] survey_4.1-1         vctrs_0.3.8          quantreg_5.86        abind_1.4-5          withr_2.4.2         
- [31] checkmate_2.0.0      cluster_2.1.2        crayon_1.4.1         recipes_0.1.17       pkgconfig_2.0.3     
- [36] labeling_0.4.2       rematch_1.0.1        nnet_7.3-16          rlang_0.4.11         globals_0.14.0      
- [41] lifecycle_1.0.0      MatrixModels_0.5-0   sandwich_3.0-1       mets_1.2.9           cellranger_1.1.0    
- [46] rprojroot_2.0.2      matrixStats_0.61.0   Matrix_1.3-4         KMsurv_0.1-5         carData_3.0-4       
- [51] zoo_1.8-9            base64enc_0.1-3      png_0.1-7            pROC_1.18.0          parallelly_1.29.0   
- [56] jpeg_0.1-9           rstatix_0.7.0        ggsignif_0.6.3       scales_1.1.1         magrittr_2.0.1      
- [61] plyr_1.8.6           compiler_4.1.1       RColorBrewer_1.1-2   cli_3.0.1            listenv_0.8.0       
- [66] htmlTable_2.3.0      Formula_1.2-4        MASS_7.3-54          tidyselect_1.1.1     stringi_1.7.3       
- [71] mitools_2.4          latticeExtra_0.6-29  survMisc_0.5.5       grid_4.1.1           tools_4.1.1         
- [76] future.apply_1.8.1   parallel_4.1.1       rstudioapi_0.13      foreach_1.5.1        farver_2.1.0        
- [81] digest_0.6.27        lava_1.6.10          Rcpp_1.0.7           car_3.0-12           broom_0.7.9         
- [86] later_1.3.0          colorspace_2.0-2     splines_4.1.1        conquer_1.2.1        xtable_1.8-4        
- [91] timeDate_3043.102    ipred_0.9-12         R6_2.5.0             Hmisc_4.6-0          pillar_1.6.2        
- [96] htmltools_0.5.2      mime_0.11            glue_1.4.2           fastmap_1.1.0        class_7.3-19        
-[101] codetools_0.2-18     mvtnorm_1.1-3        utf8_1.2.2           tibble_3.1.3         numDeriv_2016.8-1.1 
-[106] munsell_0.5.0        iterators_1.0.13     labelled_2.8.0       haven_2.4.3          reshape2_1.4.4      
-[111] gtable_0.3.0         rms_6.2-0           
+  [1] backports_1.2.1      Hmisc_4.6-0          plyr_1.8.6           splines_4.1.1        listenv_0.8.0        TH.data_1.1-0        digest_0.6.27       
+  [8] foreach_1.5.1        htmltools_0.5.2      fansi_0.5.0          magrittr_2.0.1       checkmate_2.0.0      cluster_2.1.4        recipes_0.1.17      
+ [15] globals_0.14.0       mets_1.2.9           gower_0.2.2          matrixStats_0.61.0   sandwich_3.0-1       jpeg_0.1-9           colorspace_2.0-2    
+ [22] mitools_2.4          haven_2.4.3          crayon_1.4.1         zoo_1.8-9            iterators_1.0.13     glue_1.4.2           gtable_0.3.0        
+ [29] ipred_0.9-12         MatrixModels_0.5-0   car_3.0-12           future.apply_1.8.1   rms_6.2-0            abind_1.4-5          SparseM_1.81        
+ [36] scales_1.1.1         mvtnorm_1.1-3        DBI_1.1.1            rstatix_0.7.0        Rcpp_1.0.7           xtable_1.8-4         htmlTable_2.3.0     
+ [43] proxy_0.4-27         km.ci_0.5-2          Formula_1.2-4        stats4_4.1.1         lava_1.6.10          survey_4.1-1         htmlwidgets_1.5.4   
+ [50] RColorBrewer_1.1-2   ellipsis_0.3.2       pkgconfig_2.0.3      farver_2.1.0         nnet_7.3-18          utf8_1.2.2           tidyselect_1.1.1    
+ [57] labeling_0.4.2       rlang_0.4.11         reshape2_1.4.4       later_1.3.0          munsell_0.5.0        cellranger_1.1.0     tools_4.1.1         
+ [64] generics_0.1.0       broom_0.7.9          fastmap_1.1.0        ModelMetrics_1.2.2.2 knitr_1.33           timereg_2.0.1        survMisc_0.5.5      
+ [71] purrr_0.3.4          future_1.23.0        mime_0.11            quantreg_5.86        compiler_4.1.1       rstudioapi_0.13      png_0.1-7           
+ [78] e1071_1.7-8          ggsignif_0.6.3       tibble_3.1.3         stringi_1.7.3        Matrix_1.5-3         KMsurv_0.1-5         vctrs_0.3.8         
+ [85] pillar_1.6.2         lifecycle_1.0.0      data.table_1.14.2    conquer_1.2.1        httpuv_1.6.5         R6_2.5.0             latticeExtra_0.6-29 
+ [92] promises_1.2.0.1     parallelly_1.29.0    codetools_0.2-19     polspline_1.1.19     MASS_7.3-58.2        assertthat_0.2.1     rprojroot_2.0.2     
+ [99] withr_2.4.2          multcomp_1.4-17      parallel_4.1.1       hms_1.1.0            grid_4.1.1           rpart_4.1.19         labelled_2.8.0      
+[106] timeDate_3043.102    class_7.3-21         carData_3.0-4        pROC_1.18.0          numDeriv_2016.8-1.1  lubridate_1.7.10     base64enc_0.1-3     
+[113] rematch_1.0.1       
